@@ -9,3 +9,8 @@ export { default as InjectedSolanaSigner } from "./injectedSolanaSigner";
 export { ArweaveSigner, PolygonSigner, InjectedEthereumSigner };
 export { default as NearSigner } from "./NearSigner";
 export { default as AlgorandSigner } from "./AlgorandSigner";
+export { default as HexInjectedSolanaSigner } from "./HexInjectedSolanaSigner";
+export { default as HexSolanaSigner } from "./HexSolanaSigner";
+export { default as AptosSigner } from "./AptosSigner";
+export { default as InjectedAptosSigner } from "./InjectedAptosSigner";
+export { default as MultiSignatureAptosSigner } from "./multiSignatureAptos";

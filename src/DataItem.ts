@@ -9,6 +9,7 @@ import { getSignatureData } from "./ar-data-base";
 import axios, { AxiosResponse } from "axios";
 import { SIG_CONFIG, SignatureConfig } from "./constants";
 import * as crypto from "crypto";
+import Arweave from "arweave";
 
 export const MIN_BINARY_SIZE = 80;
 
@@ -20,7 +21,7 @@ export default class DataItem implements BundleItem {
     this.binary = binary;
   }
 
-  static isDataItem(obj: any): boolean {
+  static isDataItem(obj: any): obj is DataItem {
     return obj.binary !== undefined;
   }
 
@@ -38,6 +39,15 @@ export default class DataItem implements BundleItem {
       }
       case 3: {
         return SignatureConfig.ETHEREUM;
+      }
+      case 4: {
+        return SignatureConfig.SOLANA;
+      }
+      case 5: {
+        return SignatureConfig.INJECTEDAPTOS;
+      }
+      case 6: {
+        return SignatureConfig.MULTIAPTOS;
       }
       default: {
         throw new Error("Unknown signature type: " + signatureTypeVal);
@@ -194,6 +204,11 @@ export default class DataItem implements BundleItem {
     return this.rawId;
   }
 
+  public async setSignature(signature: Buffer): Promise<void> {
+    this.binary.set(signature, 2);
+    this._id = Buffer.from(await Arweave.crypto.hash(signature));
+  }
+
   public isSigned(): boolean {
     return (this._id?.length ?? 0) > 0;
   }
@@ -267,7 +282,7 @@ export default class DataItem implements BundleItem {
     );
     const numberOfTagBytes = byteArrayToLong(numberOfTagBytesArray);
 
-    if (numberOfTagBytes > 2048) return false;
+    if (numberOfTagBytes > 4096) return false;
 
     if (numberOfTags > 0) {
       try {
